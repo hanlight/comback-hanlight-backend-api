@@ -1,0 +1,3376 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "한빛 백엔드 API 문서",
+    "version": "1.0.0",
+    "title": "한빛"
+  },
+  "tags": [
+    {
+      "name": "user",
+      "description": "유저"
+    },
+    {
+      "name": "timetable",
+      "description": "시간표"
+    },
+    {
+      "name": "calendar",
+      "description": "학사일정"
+    },
+    {
+      "name": "notice",
+      "description": "공지사랑"
+    },
+    {
+      "name": "meal",
+      "description": "급식"
+    },
+    {
+      "name": "board",
+      "description": "대나무숲"
+    },
+    {
+      "name": "dev",
+      "description": "개발할 때 사용 됨"
+    },
+    {
+      "name": "status",
+      "description": "상태 확인"
+    },
+    {
+      "name": "hanseithon",
+      "description": "한세톤"
+    },
+    {
+      "name": "admin",
+      "description": "어드민 페이지"
+    }
+  ],
+  "paths": {
+    "/dev/errors": {
+      "get": {
+        "tags": [
+          "dev"
+        ],
+        "description": "에러 목록",
+        "responses": {
+          "200": {
+            "description": "성공"
+          }
+        }
+      }
+    },
+    "/dev/api-docs": {
+      "get": {
+        "tags": [
+          "dev"
+        ],
+        "description": "API 문서",
+        "responses": {
+          "200": {
+            "description": "성공"
+          }
+        }
+      }
+    },
+    "/user/phone": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "전화번호 인증",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "FB account kit에서 응답값으로 준 code value"
+                  },
+                  "signKey": {
+                    "type": "string",
+                    "description": "회원가입 키"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "유저가 이미 해당 전화번호인 것이 증명되었기 때문에 다음 프로세스를 진행하지 않음"
+          },
+          "401": {
+            "description": "(Wrong_Request) facebook account kit으로 요청된 code값이 잘못됨"
+          },
+          "412": {
+            "description": "해당 키에 유저가 조회되지 않음, 요청 데이터가 잘못됨, 요청 데이터가 이미 데이터베이스에 존재함"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["user"],
+        "description": "전화번호 수정",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "FB account kit에서 응답값으로 준 code value"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "유저가 이미 해당 전화번호인 것이 증명되었기 때문에 다음 프로세스를 진행하지 않음"
+          },
+          "401": {
+            "description": "(Wrong_Request) facebook account kit으로 요청된 code값이 잘못됨"
+          },
+          "412": {
+            "description": "해당 키에 유저가 조회되지 않음, 요청 데이터가 잘못됨, 요청 데이터가 이미 데이터베이스에 존재함"
+          }
+        }
+      }
+    },
+    "/user/exist": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "description": "아이디 중복확인",
+        "parameters": [
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "key",
+            "description": "[id(아이디), tp(전화번호), signKey(회원가입 키)] 중 하나",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "value",
+            "description": "key값에 따른 value",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "exist": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "요청값의 이상"
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "회원가입",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "signKey": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "전화번호 인증을 받지 않았는데 회원가입 요청을 날린 경우"
+          },
+          "412": {
+            "description": "아이디가 사용 중일 때"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "로그인",
+        "requestBody": {
+          "content": {
+            "applicaiton/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "accessToken": {
+                          "type": "string"
+                        },
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "등록되지 않은 아이디이거나, 아이디 또는 비밀번호를 잘못 입력하셨습니다."
+          }
+        }
+      }
+    },
+    "/user/recovery/id": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "아이디 찾기",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "FB account kit에서 응답값으로 준 code value"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "facebook account kit으로 요청된 code값이 잘못됨"
+          },
+          "412": {
+            "description": "해당 데이터를 가진 유저가 조회되지 않음, 요청 데이터가 잘못됨"
+          }
+        }
+      }
+    },
+    "/user/recovery/password": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "비밀번호 찾기",
+        "requestBody": {
+          "content": {
+            "applicaiton/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "FB account kit에서 응답값으로 준 code value"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "유저의 아이디"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "facebook account kit으로 요청된 code값이 잘못됨"
+          },
+          "412": {
+            "description": "해당 데이터를 가진 유저가 조회되지 않음, 요청 데이터가 잘못됨"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "description": "유저 조회",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "잘못된 토큰"
+          }
+        }
+      }
+    },
+    "/user/password": {
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "description": "유저 비밀번호 변경",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "잘못된 토큰"
+          }
+        }
+      }
+    },
+    "/timetable": {
+      "get": {
+        "tags": [
+          "timetable"
+        ],
+        "description": "시간표 조회",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "applicaiton/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "timetable": {
+                          "type": "object",
+                          "properties": {
+                            "월": {
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "화": {
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "수": {
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "목": {
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "금": {
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar": {
+      "get": {
+        "tags": [
+          "calendar"
+        ],
+        "description": "학사일정",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "year",
+            "description": "년도",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "month",
+            "description": "달",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "calendar": {
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "date": {
+                                "type": "integer"
+                              },
+                              "detail": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "잘못된 데이터"
+          }
+        }
+      }
+    },
+    "/calendar/recent": {
+      "get": {
+        "tags": [
+          "calendar"
+        ],
+        "description": "최근 학사일정 5개",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "calendar": {
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "year": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "date": {
+                                "type": "integer"
+                              },
+                              "detail": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "잘못된 데이터"
+          }
+        }
+      }
+    },
+    "/notice": {
+      "get": {
+        "tags": [
+          "notice"
+        ],
+        "description": "공지사항",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "type",
+            "description": "post | list",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "post_pk",
+            "description": "post - primaryKey",
+            "required": false
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "page",
+            "description": "list - page",
+            "required": false
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "title",
+            "description": "list - title",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/NoticePost"
+                      },
+                      {
+                        "$ref": "#/components/schemas/NoticeList"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 페이지"
+          },
+          "412": {
+            "description": "잘못된 데이터"
+          }
+        }
+      }
+    },
+    "/meal": {
+      "get": {
+        "tags": [
+          "meal"
+        ],
+        "description": "급식 조회",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "sort",
+            "description": "montk | week",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "month",
+            "description": "sort month - month",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Meal"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "잘못된 데이터"
+          }
+        }
+      }
+    },
+    "/meal/order": {
+      "get": {
+        "tags": [
+          "meal"
+        ],
+        "description": "급식 순서 조회",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MealOrder"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/board": {
+      "get": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "page",
+            "description": "페이지 기본값: 1",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "board": {
+                          "$ref": "#/components/schemas/Boards"
+                        },
+                        "resultCount": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "files": {
+                    "type": "array",
+                    "format": "binary",
+                    "description": "image/jpeg, image/png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음(재학생과 졸업생만 가능)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "board_pk": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음(재학생과 졸업생만 가능)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "board_pk",
+            "description": "board_pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음(재학생과 졸업생만 가능)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/board/comment": {
+      "get": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "board_pk",
+            "description": "board_pk",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "page",
+            "description": "페이지 기본값: 1",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "comment": {
+                          "$ref": "#/components/schemas/Comments"
+                        },
+                        "resultCount": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 Board"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "최대 300자"
+                  },
+                  "board_pk": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음(재학생과 졸업생만 가능)"
+          },
+          "404": {
+            "description": "없는 Board"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "최대 300자"
+                  },
+                  "board_pk": {
+                    "type": "integer"
+                  },
+                  "comment_pk": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음(재학생과 졸업생만 가능)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "board"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "board_pk",
+            "description": "board_pk",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "comment_pk",
+            "description": "comment_pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음(재학생과 졸업생만 가능)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/board/report": {
+      "post": {
+        "tags": [
+          "board"
+        ],
+        "description": "신고하기",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "type",
+            "description": "board | comment",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "board_pk",
+            "description": "board_pk",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "comment_pk",
+            "description": "comment - comment_pk",
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "최대 300자"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/board/like": {
+      "post": {
+        "tags": [
+          "board"
+        ],
+        "description": "좋아요",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "board || comment"
+                  },
+                  "board_pk": {
+                    "type": "integer",
+                    "description": "해당 게시글의 pk"
+                  },
+                  "comment_pk": {
+                    "type": "integer",
+                    "description": "댓글 좋아요일 경우 댓글의 pk를 포함해야 한다"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 페이지"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "status"
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hanseithon/team": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 팀 목록",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "team": {
+                          "$ref": "#/components/schemas/Teams"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 팀 생성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "teamName": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "생활 || 게임"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "team": {
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            },
+                            "password": {
+                              "type": "string"
+                            },
+                            "leader": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "classNum": {
+                                  "type": "string"
+                                },
+                                "role": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 팀 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "teamPk",
+            "description": "한세톤 팀 pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/hanseithon/team/member": {
+      "post": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 팀 멤버 생성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "teamPk",
+            "description": "신청하려는 팀의 pk",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "description": "Planner || Developer || Designer"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "team": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            },
+                            "member": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "classNum": {
+                                  "type": "string"
+                                },
+                                "role": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      }
+    },
+    "/admin/user": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "description": "유저 정보 확인",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "page",
+            "description": "페이지 번호"
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "type",
+            "description": "student, teacher, graduate, parent (사용자의 타입)"
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "major",
+            "description": "H, U, G (사용자의 전공)"
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "grade",
+            "description": "1, 2, 3 (사용자의 학년)"
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "classNum",
+            "description": "1, 2  (사용자의 반)"
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "studentNum",
+            "description": "1 ~ 35 (사용자의 번호)"
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "name",
+            "description": "사용자의 이름"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "description": "유저 생성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "major": {
+                    "type": "string"
+                  },
+                  "grade": {
+                    "type": "integer"
+                  },
+                  "classNum": {
+                    "type": "integer"
+                  },
+                  "studentNum": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "( 요청 데이터가 잘못되었을 때 ) Wrong_Data - 잘못된 요청 데이터 / ( 중복 요소, 유저가 있을 경우 ) Exist_User - 존재하는 유저"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admin"
+        ],
+        "description": "유저 정보 변경",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "user_pk": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "admin": {
+                    "type": "integer"
+                  },
+                  "tp": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "user": {
+                          "type": "array",
+                          "items": {
+                            "properties": {
+                              "pk": {
+                                "type": "string"
+                              },
+                              "admin": {
+                                "type": "integer"
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "signKey": {
+                                "type": "string"
+                              },
+                              "tp": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "유저 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "user_pk",
+            "description": "user의 pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/notice": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "description": "공지사항 조회",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "notice": {
+                          "$ref": "#/components/schemas/NoticeApproveLog"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "description": "공지사항 작성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "notice": {
+                          "$ref": "#/components/schemas/Notice"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admin"
+        ],
+        "description": "공지사항 수정",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "notice_pk": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "noticeApproveLog": {
+                          "$ref": "#/components/schemas/NoticeApproveLog"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "공지사항 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "notice_pk",
+            "description": "notice의 pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "user": {
+                          "$ref": "#/components/schemas/NoticeApproveLog"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/notice/approve": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "description": "공지사항 승인 요청",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "approve_pk",
+            "description": "notice approve의 pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "notice": {
+                          "$ref": "#/components/schemas/NoticeApproveLog"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "공지사항 삭제 승인 요청",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "approve_pk",
+            "description": "notice approve의 pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/timetable": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "description": "시간표 생성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "major": {
+                    "type": "string"
+                  },
+                  "grade": {
+                    "type": "integer"
+                  },
+                  "classNum": {
+                    "type": "integer"
+                  },
+                  "day": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "th": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "timetable": {
+                          "$ref": "#/components/schemas/TimeTable"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "( 요청 데이터가 잘못되었을 때 ) Wrong_Data - 잘못된 요청 데이터 / ( 중복된 데이터가 있을 경우 ) Exist_Data - 중복되는 데이터입니다."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "시간표 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "major",
+            "description": "과 선택",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "grade",
+            "description": "학년 선택",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "classNum",
+            "description": "반 선택",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "day",
+            "description": "요일 선택",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "th",
+            "description": "교시 선택",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/calender": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "description": "학사일정 생성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "month": {
+                    "type": "integer"
+                  },
+                  "date": {
+                    "type": "integer"
+                  },
+                  "detail": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "calender": {
+                          "$ref": "#/components/schemas/Calender"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admin"
+        ],
+        "description": "학사일정 변경",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "calender_pk": {
+                    "type": "integer"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "month": {
+                    "type": "integer"
+                  },
+                  "date": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/Calender"
+                      },
+                      {
+                        "$ref": "#/components/schemas/CalenderLog"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "학사일정 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "calender_pk",
+            "description": "calender의 pk",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/board": {
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "게시글 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "board_pk",
+            "description": "board의 pk",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "reason",
+            "description": "삭제 사유",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/comment": {
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "description": "댓글 삭제",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "name": "comment_pk",
+            "description": "comment의 pk",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "reason",
+            "description": "삭제 사유",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "student",
+              "teacher",
+              "graduate",
+              "parent"
+            ]
+          },
+          "admin": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "major": {
+            "type": "string",
+            "description": "학과"
+          },
+          "grade": {
+            "type": "integer",
+            "description": "학년"
+          },
+          "classNum": {
+            "type": "integer",
+            "description": "반"
+          },
+          "studentNum": {
+            "type": "integer",
+            "description": "학급에서의 번호"
+          }
+        }
+      },
+      "Board": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        }
+      },
+      "Boards": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "edited": {
+            "type": "boolean"
+          },
+          "commentCount": {
+            "type": "integer"
+          },
+          "comment": {
+            "type": "object",
+            "properties": {
+              "pk": {
+                "type": "integer"
+              },
+              "user_name": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "edited": {
+                "type": "boolean"
+              }
+            }
+          },
+          "write": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Teams": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "member": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "classNum": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "leader": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        }
+      },
+      "Comments": {
+        "type": "array",
+        "items": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "pk": {
+                  "type": "integer"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "edited": {
+                  "type": "boolean"
+                },
+                "isLiked": {
+                  "type": "boolean"
+                },
+                "likeCount": {
+                  "type": "integer"
+                },
+                "write": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "Success": {
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "success",
+          "code",
+          "name",
+          "message",
+          "description"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Notice": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_pk": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "approved": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NoticePost": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "read": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NoticeList": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "read": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NoticeApproveLog": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "notice_pk": {
+            "type": "integer"
+          },
+          "user_pk": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "approved": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "Meal": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "MealOrder": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "string"
+          }
+        }
+      },
+      "TimeTable": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "major": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "integer"
+          },
+          "classNum": {
+            "type": "integer"
+          },
+          "day": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "th": {
+            "type": "integer"
+          }
+        }
+      },
+      "Calender": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "month": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "createAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "CalenderLog": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_pk": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "month": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "HanseithonTeam": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_pk": {
+            "type": "string"
+          },
+          "team_name": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string",
+            "description": "생활 || 게임"
+          },
+          "password": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "HanseithonTeamMember": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "user_pk": {
+            "type": "string"
+          },
+          "team_pk": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "classNum": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "description": "Planner || Developer || Designer"
+          },
+          "leader": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

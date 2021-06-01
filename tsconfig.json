@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "plugins": [{ "name": "typescript-tslint-plugin" }],
+    "baseUrl": ".",
+    "paths": {
+      "@Controller/*": ["routes/controllers/*"],
+      "@Middleware/*": ["routes/middlewares/*"],
+      "@Model/*": ["database/models/*"],
+      "@Lib/*": ["lib/*"]
+    },
+    "lib": ["esnext"],
+    "target": "esnext",
+    "module": "commonjs",
+    "resolveJsonModule": true, // Allow import json file
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "experimentalDecorators": true, // sequelize
+    "emitDecoratorMetadata": true, // sequelize
+    "pretty": true // Error message pretty,,
+  },
+  "compileOnSave": true,
+  "exclude": ["node_modules", "config"]
+}
