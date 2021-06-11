@@ -5,5 +5,5 @@ package-lock.json
 
 /node_modules
 /migration
-Dockerfile
 Jenkinsfile
+start.bat
