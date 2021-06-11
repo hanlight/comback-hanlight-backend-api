@@ -9,14 +9,12 @@ const mealOrder = async (req: Request, res: Response, next: NextFunction) => {
     const result: MealOrder[] = await MealOrder.findAll({
       order: [['createdAt', 'DESC']]
     });
-    console.log("CCC");
     let order;
     if(result[0] != null){
       order = result[0].order as any;
     }else{
       order = null;
     }
-    console.log("DDD");
     await res.json({
       success: true,
       data: {
@@ -24,7 +22,6 @@ const mealOrder = async (req: Request, res: Response, next: NextFunction) => {
       },
     });
   } catch (error) {
-    console.log("AA")
     console.log(error);
     next(new CustomError({ name: 'Database_Error' }));
   }
