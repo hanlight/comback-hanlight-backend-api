@@ -57,7 +57,7 @@ const router = Router();
 router.post('/register', registerValidation);
 router.post('/login', loginValidation);
 router.post('/phone', phoneValidation);
-router.post('/sendsms', authValidation);
+router.post('/sms', authValidation);
 router.get('/exist', existValidation);
 router.post('/recovery/id', recoveryIdValidation);
 router.post('/recovery/password', recoveryPwValidation);
@@ -71,7 +71,7 @@ router.post('/register', userExistCheck, signKeyCheck, passwordEncryption, regis
 router.post('/login', userExistCheck, passwordEncryption, login, issueToken('login'));
 router.post('/phone', signKeyCheck, authCheckCode, phoneCheck, createTermAcceptLog, phoneInsert);
 router.get('/exist', exist);
-router.post('/sendsms', authSend);
+router.post('/sms', authSend);
 router.post('/recovery/id', authCheckCode, recoveryId);
 router.post('/recovery/password', authCheckCode, phoneCheck, issueToken('none'));
 
