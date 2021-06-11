@@ -30,11 +30,6 @@
   > PW_ENCRYPTION_ITERATION= number  
   > PW_ENCRYPTION_SIZE= number
 
-  FACEBOOK_SETTING
-
-  > FB_VERSION= version  
-  > FB_APP_ID= appId  
-  > FB_APP_SECRET= appSecret
 
   AWS_SETTING
 
