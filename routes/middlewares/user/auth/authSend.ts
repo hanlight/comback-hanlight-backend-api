@@ -11,15 +11,14 @@ dotenv.config();
 
 const authSend = async (req: Request, res: Response, next: NextFunction) => {
     const { phone } = req.body;
-    let pn;
-    if (/^010{1}[0-9]{3,4}[0-9]{4}$/.test(phone)) {
-        pn = new PhoneNumber(phone,'KR')
-
+    let pn : PhoneNumber;
+    if (/^010{1}[0-9]{3,4}[0-9]{4}$/.test(phone) || /^010{1}-[0-9]{3,4}-[0-9]{4}$/.test(phone)) {
+        pn = new PhoneNumber(phone,'KR');
         let verifyCode = String(Math.floor(Math.random() * 10));
         for (let i = 0; i < 5; i++) {
             verifyCode += String(Math.floor(Math.random() * 10));
         };
-        Cache.put(verifyCode, phone, 180000);
+        Cache.put(verifyCode, '0' + pn.getNumber('significant'), 180000);
 
         AWS.config.update({region: 'ap-northeast-1'});
 
