@@ -16,12 +16,12 @@ const getUserFromToken = async (req: Request, res: Response, next: NextFunction)
         pk: tokenDecoded.pk,
       },
     });
-
-    if (Number(user.updatedAt) > tokenDecoded.iat * 1000) {
-      next(new CustomError({ name: 'Token_Expired' }));
-    }
-
+    
     if (user) {
+      if (Number(user.updatedAt) > tokenDecoded.iat * 1000) {
+        next(new CustomError({ name: 'Token_Expired' }));
+      }
+
       switch (user.type) {
         case 'student':
           const stduent: Student = await Student.findOne({ where: { user_pk: user.pk } });
