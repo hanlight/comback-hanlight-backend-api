@@ -6,7 +6,7 @@ dotenv.config();
 const S3_CONFIG = {
   AWS_ACCESSKEY_ID: process.env.AWS_ACCESSKEY_ID,
   AWS_SECRET_ACCESSKEY: process.env.AWS_SECRET_ACCESSKEY,
-  AWS_REGION: process.env.AWS_REGION,
+  AWS_REGION: process.env.S3_AWS_REGION,
 };
 
 const s3 = new AWS.S3({
