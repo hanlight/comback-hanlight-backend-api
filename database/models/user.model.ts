@@ -16,7 +16,6 @@ import Board from './board.model';
 import BoardCommentLike from './boardCommentLike.model';
 import BoardLike from './boardLike.model';
 import BoardManageLog from './boardManageLog.model';
-import CalendarLog from './calendarLog.model';
 import Graduate from './graduate.model';
 import Notice from './notice.model';
 import NoticeApproveLog from './noticeApproveLog.model';
@@ -25,7 +24,6 @@ import Parent from './parent.model';
 import Student from './student.model';
 import Teacher from './teacher.model';
 import TermAcceptLog from './termAcceptLog.model';
-import TimeTableLog from './timeTableLog.model';
 
 @Table({
   timestamps: true,
@@ -91,10 +89,6 @@ export default class User extends Model<User> {
 
   @HasMany(() => NoticeViewLog)
   public noticeViewLog: NoticeViewLog[];
-  @HasMany(() => CalendarLog)
-  public calendarLog: CalendarLog[];
-  @HasMany(() => TimeTableLog)
-  public timeTableLog: TimeTableLog[];
   @HasMany(() => BoardManageLog)
   public boardManageLog: BoardManageLog[];
   @HasMany(() => NoticeApproveLog)
