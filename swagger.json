@@ -176,7 +176,7 @@
         "tags": [
           "user"
         ],
-        "description": "전화번호 인증",
+        "description": "전화번호 인증 (유효기간 3분)",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1828,14 +1828,6 @@
           {
             "in": "query",
             "schema": {
-              "type": "string"
-            },
-            "name": "major",
-            "description": "H, U, G (사용자의 전공)"
-          },
-          {
-            "in": "query",
-            "schema": {
               "type": "integer"
             },
             "name": "grade",
@@ -1924,9 +1916,6 @@
                     "type": "string"
                   },
                   "name": {
-                    "type": "string"
-                  },
-                  "major": {
                     "type": "string"
                   },
                   "grade": {
@@ -2482,9 +2471,6 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "major": {
-                    "type": "string"
-                  },
                   "grade": {
                     "type": "integer"
                   },
@@ -2551,15 +2537,6 @@
             },
             "name": "access_token",
             "description": "토큰",
-            "required": true
-          },
-          {
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "name": "major",
-            "description": "과 선택",
             "required": true
           },
           {
@@ -2949,10 +2926,6 @@
           "id": {
             "type": "string"
           },
-          "major": {
-            "type": "string",
-            "description": "학과"
-          },
           "grade": {
             "type": "integer",
             "description": "학년"
@@ -3281,9 +3254,6 @@
         "properties": {
           "pk": {
             "type": "integer"
-          },
-          "major": {
-            "type": "string"
           },
           "grade": {
             "type": "integer"
