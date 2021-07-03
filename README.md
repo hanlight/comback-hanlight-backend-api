@@ -35,4 +35,5 @@
 
   > AWS_ACCESSKEY_ID= string  
   > AWS_SECRET_ACCESSKEY= string  
-  > AWS_REGION= ap-northeast-2
+  > S3_AWS_REGION= ap-northeast-2
+  > SNS_AWS_REGION= ap-northeast-1

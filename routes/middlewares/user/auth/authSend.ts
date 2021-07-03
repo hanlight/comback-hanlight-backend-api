@@ -5,7 +5,7 @@ import CustomError from '@Middleware/error/customError';
 // Load the AWS SDK for Node.js
 import * as AWS from 'aws-sdk';
 var Cache = require('memory-cache');
-import { body } from 'express-validator';
+
 dotenv.config();
 
 
@@ -20,7 +20,7 @@ const authSend = async (req: Request, res: Response, next: NextFunction) => {
         };
         Cache.put(verifyCode, '0' + pn.getNumber('significant'), 180000);
 
-        AWS.config.update({region: 'ap-northeast-1'});
+        AWS.config.update({region: process.env.SNS_AWS_REGION});
 
         const params = {
         Message: '[한빛] 본인확인 인증번호 [' + verifyCode + ']를 화면에 입력해주세요',
@@ -41,7 +41,6 @@ const authSend = async (req: Request, res: Response, next: NextFunction) => {
             next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
         });
     }else{
-        console.log("aaaaa")
         next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
     }
 
