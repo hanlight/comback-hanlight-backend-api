@@ -6,11 +6,8 @@ const postUserValidation = oneOf([
       .isString()
       .custom(val => val === 'student'),
     body('name').isString(),
-    body('major')
-      .isString()
-      .custom(val => ['H', 'G', 'U'].includes(val)),
     body('grade').isInt({ min: 1, max: 3 }),
-    body('classNum').isInt({ min: 1, max: 2 }),
+    body('classNum').isInt({ min: 1, max: 5 }),
     body('studentNum').isInt({ min: 1, max: 30 }),
   ],
   [

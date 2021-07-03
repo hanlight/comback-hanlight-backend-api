@@ -14,9 +14,13 @@ import login from '@Middleware/user/login/login';
 import registerValidation from '@Middleware/user/register/_validation';
 import register from '@Middleware/user/register/register';
 
+//auth
+import authValidation from '@Middleware/user/auth/_validation';
+import authSend from '@Middleware/user/auth/authSend';
+import authCheckCode from '@Middleware/user/auth/authCheckCode';
+
 // phone
 import phoneValidation from '@Middleware/user/phone/_validation';
-import fbCheckCode from '@Middleware/user/phone/fbCheckCode';
 import phoneCheck from '@Middleware/user/phone/phoneCheck';
 import phoneInsert from '@Middleware/user/phone/phoneInsert';
 import createTermAcceptLog from '@Middleware/user/rule/createTermAcceptLog';
@@ -53,6 +57,7 @@ const router = Router();
 router.post('/register', registerValidation);
 router.post('/login', loginValidation);
 router.post('/phone', phoneValidation);
+router.post('/sms', authValidation);
 router.get('/exist', existValidation);
 router.post('/recovery/id', recoveryIdValidation);
 router.post('/recovery/password', recoveryPwValidation);
@@ -64,16 +69,17 @@ router.use(checkValidation);
 
 router.post('/register', userExistCheck, signKeyCheck, passwordEncryption, register);
 router.post('/login', userExistCheck, passwordEncryption, login, issueToken('login'));
-router.post('/phone', signKeyCheck, fbCheckCode, phoneCheck, createTermAcceptLog, phoneInsert);
+router.post('/phone', signKeyCheck, authCheckCode, phoneCheck, createTermAcceptLog, phoneInsert);
 router.get('/exist', exist);
-router.post('/recovery/id', fbCheckCode, recoveryId);
-router.post('/recovery/password', fbCheckCode, phoneCheck, issueToken('none'));
+router.post('/sms', authSend);
+router.post('/recovery/id', authCheckCode, recoveryId);
+router.post('/recovery/password', authCheckCode, phoneCheck, issueToken('none'));
 
 router.use('/', verifyToken, getUserFromToken);
 
 router.get('/', getUser);
 router.patch('/password', passwordEncryption, patchPassword);
-router.patch('/phone', fbCheckCode, phoneCheck, phoneInsert);
+router.patch('/phone', authCheckCode, phoneCheck, phoneInsert);
 router.post('/image', postImage, updateImage, getUser);
 
 export default router;

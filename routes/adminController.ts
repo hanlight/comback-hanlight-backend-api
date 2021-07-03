@@ -52,6 +52,11 @@ import postCalendar from '@Middleware/admin/calendar/post/postCalendar';
 import deleteComment from '@Middleware/admin/board/comment/delete/deleteComment';
 import deleteBoard from '@Middleware/admin/board/delete/deleteBoard';
 
+//hanseithon
+import getHanseithonUser from '@Middleware/admin/hanseithon/getUser';
+import getHanseithonUserValidation from '@Middleware/admin/hanseithon/_validation';
+
+
 const router: Router = Router();
 
 router.use(verifyToken, getUserFromToken, checkAdmin);
@@ -73,6 +78,7 @@ router.patch('/calendar', patchCalendarValidation);
 router.delete('/calendar', deleteCalendarValidation);
 router.delete('/board', deleteBoardValidation);
 router.delete('/comment', deleteCommentValidation);
+router.post('/hanseithon/user', getHanseithonUserValidation);
 
 router.use(checkValidation);
 
@@ -93,5 +99,7 @@ router.patch('/calendar', patchCalendar);
 router.delete('/calendar', deleteCalendar);
 router.delete('/board', deleteBoard);
 router.delete('/comment', deleteComment);
+router.post('/hanseithon/user', getHanseithonUser)
+
 
 export default router;

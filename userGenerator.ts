@@ -10,7 +10,7 @@ import * as pattern from './lib/pattern.json';
 import Student from '@Model/student.model';
 import User from '@Model/user.model';
 
-const port: number = 13337;
+const port: number = 9000;
 const baseUrl = 'http://127.0.0.1:' + process.env.PORT;
 const argv = process.argv;
 const id = argv[2];
@@ -23,7 +23,7 @@ const passwordBool = new RegExp(pattern.password).test(password);
 const tpBool = new RegExp(pattern.tp).test(tp);
 
 if (!(idBool && passwordBool && !isNaN(admin) && tpBool)) {
-  console.error(id, password, admin, tp, '잘못된 요청 사항입니다. 입니다.');
+  console.error(id, password, admin, tp, '잘못된 요청 사항입니다.');
   process.exit(1);
 }
 
@@ -46,11 +46,10 @@ http.createServer(app).listen(port, async () => {
           tp,
           signKey,
           student: {
-            major: 'U',
             grade: 3,
-            classNum: 2,
-            studentNum: 28,
-            name: '이예준',
+            classNum: 5,
+            studentNum: 16,
+            name: '임석현',
           },
         },
         { include: [{ model: Student }] }

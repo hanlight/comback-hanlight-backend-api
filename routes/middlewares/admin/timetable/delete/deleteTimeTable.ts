@@ -7,7 +7,6 @@ import User from '@Model/user.model';
 
 const deleteTimeTable = async (req: Request, res: Response, next: NextFunction) => {
   const user: User = res.locals.user;
-  const major: string = req.query.major as string;
   const grade: number = parseInt(req.query.grade as string, 10);
   const classNum: number = parseInt(req.query.classNum as string, 10);
   const day: string = req.query.day as string;
@@ -16,7 +15,6 @@ const deleteTimeTable = async (req: Request, res: Response, next: NextFunction) 
   try {
     const timeTable: TimeTable = await TimeTable.findOne({
       where: {
-        major,
         grade,
         classNum,
         day,
@@ -31,7 +29,6 @@ const deleteTimeTable = async (req: Request, res: Response, next: NextFunction) 
           type: 'D',
           user_pk: user.pk,
           user_name: user[user.type].name,
-          major,
           grade,
           classNum,
         }),

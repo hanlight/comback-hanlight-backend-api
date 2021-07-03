@@ -14,7 +14,6 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
   const page = (req.query.page as string && (req.query.page as any) - 1) || 0;
 
   const type: 'student' | 'teacher' | 'graduate' | 'parent' | undefined = req.query.type as any;
-  const major: 'H' | 'U' | 'G' | undefined = req.query.major as any;
   const grade: number | undefined = req.query.grade as any;
   const classNum: number | undefined = req.query.classNum as any;
   const studentNum: number | undefined = req.query.studentNum as any;
@@ -25,7 +24,6 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
   };
 
   const stduentClause = {
-    major,
     grade,
     classNum,
     studentNum,
@@ -42,11 +40,11 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
 
   const include: Includeable[] = [];
 
-  if (type === 'student' || major || grade || classNum || studentNum) {
+  if (type === 'student' || grade || classNum || studentNum) {
     include.push({
       model: Student,
       where: stduentClause,
-      attributes: ['major', 'grade', 'classNum', 'studentNum', 'name'],
+      attributes: ['grade', 'classNum', 'studentNum', 'name'],
       required: true,
     });
   } else if (type === 'graduate') {
@@ -74,7 +72,7 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
     include.push(
       {
         model: Student,
-        attributes: ['major', 'grade', 'classNum', 'studentNum', 'name'],
+        attributes: ['grade', 'classNum', 'studentNum', 'name'],
         where: onlyNameClause,
         required: false,
       },

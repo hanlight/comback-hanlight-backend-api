@@ -87,7 +87,7 @@
                 "properties": {
                   "code": {
                     "type": "string",
-                    "description": "FB account kit에서 응답값으로 준 code value"
+                    "description": "SMS 인증값으로 준 code value"
                   },
                   "signKey": {
                     "type": "string",
@@ -113,7 +113,7 @@
             "description": "유저가 이미 해당 전화번호인 것이 증명되었기 때문에 다음 프로세스를 진행하지 않음"
           },
           "401": {
-            "description": "(Wrong_Request) facebook account kit으로 요청된 code값이 잘못됨"
+            "description": "(Wrong_Request) SMS 인증값으로 준 code값이 잘못됨"
           },
           "412": {
             "description": "해당 키에 유저가 조회되지 않음, 요청 데이터가 잘못됨, 요청 데이터가 이미 데이터베이스에 존재함"
@@ -163,10 +163,47 @@
             "description": "유저가 이미 해당 전화번호인 것이 증명되었기 때문에 다음 프로세스를 진행하지 않음"
           },
           "401": {
-            "description": "(Wrong_Request) facebook account kit으로 요청된 code값이 잘못됨"
+            "description": "(Wrong_Request) SMS 인증값으로 준 code값이 잘못됨"
           },
           "412": {
             "description": "해당 키에 유저가 조회되지 않음, 요청 데이터가 잘못됨, 요청 데이터가 이미 데이터베이스에 존재함"
+          }
+        }
+      }
+    },
+    "/user/sms": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "전화번호 인증 (유효기간 3분)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "phone": {
+                    "type": "string",
+                    "description": "전화번호"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "전화번호가 잘못되었음"
           }
         }
       }
@@ -368,7 +405,7 @@
             }
           },
           "401": {
-            "description": "facebook account kit으로 요청된 code값이 잘못됨"
+            "description": "SMS 인증값으로 준 code값이 잘못됨"
           },
           "412": {
             "description": "해당 데이터를 가진 유저가 조회되지 않음, 요청 데이터가 잘못됨"
@@ -419,7 +456,7 @@
             }
           },
           "401": {
-            "description": "facebook account kit으로 요청된 code값이 잘못됨"
+            "description": "SMS 인증값으로 준 code값이 잘못됨"
           },
           "412": {
             "description": "해당 데이터를 가진 유저가 조회되지 않음, 요청 데이터가 잘못됨"
@@ -1791,14 +1828,6 @@
           {
             "in": "query",
             "schema": {
-              "type": "string"
-            },
-            "name": "major",
-            "description": "H, U, G (사용자의 전공)"
-          },
-          {
-            "in": "query",
-            "schema": {
               "type": "integer"
             },
             "name": "grade",
@@ -1887,9 +1916,6 @@
                     "type": "string"
                   },
                   "name": {
-                    "type": "string"
-                  },
-                  "major": {
                     "type": "string"
                   },
                   "grade": {
@@ -2445,9 +2471,6 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "major": {
-                    "type": "string"
-                  },
                   "grade": {
                     "type": "integer"
                   },
@@ -2514,15 +2537,6 @@
             },
             "name": "access_token",
             "description": "토큰",
-            "required": true
-          },
-          {
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "name": "major",
-            "description": "과 선택",
             "required": true
           },
           {
@@ -2912,10 +2926,6 @@
           "id": {
             "type": "string"
           },
-          "major": {
-            "type": "string",
-            "description": "학과"
-          },
           "grade": {
             "type": "integer",
             "description": "학년"
@@ -3244,9 +3254,6 @@
         "properties": {
           "pk": {
             "type": "integer"
-          },
-          "major": {
-            "type": "string"
           },
           "grade": {
             "type": "integer"
