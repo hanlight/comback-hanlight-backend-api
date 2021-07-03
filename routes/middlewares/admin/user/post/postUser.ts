@@ -12,7 +12,6 @@ import User from '@Model/user.model';
 const postUser = async (req: Request, res: Response, next: NextFunction) => {
   const type: 'student' | 'teacher' | 'parent' | 'graduate' = req.body.type;
   const name: string = req.body.name;
-  const major: 'H' | 'G' | 'U' | undefined = req.body.major;
   const grade: number | undefined = (req.body.grade && parseInt(req.body.grade, 10)) || undefined;
   const classNum: number | undefined = (req.body.classNum && parseInt(req.body.classNum, 10)) || undefined;
   const studentNum: number | undefined = (req.body.studentNum && parseInt(req.body.studentNum, 10)) || undefined;
@@ -21,7 +20,6 @@ const postUser = async (req: Request, res: Response, next: NextFunction) => {
     if (type === 'student') {
       const duplicateUser = await Student.findOne({
         where: {
-          major,
           grade,
           classNum,
           studentNum,
@@ -39,7 +37,6 @@ const postUser = async (req: Request, res: Response, next: NextFunction) => {
               charset: 'alphanumeric',
             }),
             student: {
-              major,
               grade,
               classNum,
               studentNum,

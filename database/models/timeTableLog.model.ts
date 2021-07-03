@@ -41,10 +41,6 @@ export default class TimeTableLog extends Model<TimeTableLog> {
   public grade: number;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public major: string;
-
-  @AllowNull(false)
   @Column(DataType.INTEGER)
   public classNum: number;
 

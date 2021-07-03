@@ -11,10 +11,6 @@ export default class TimeTable extends Model<TimeTable> {
   public pk: number;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public major: string;
-
-  @AllowNull(false)
   @Column(DataType.INTEGER)
   public grade: number;
 

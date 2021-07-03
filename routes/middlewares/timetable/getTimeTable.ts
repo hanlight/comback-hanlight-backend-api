@@ -16,7 +16,6 @@ const getTimeTable = async (req: Request, res: Response, next: NextFunction) => 
         : await TimeTable.findAll({
             where: {
               grade: user.student.grade,
-              major: user.student.major,
               classNum: user.student.classNum,
             },
             order: ['th'],
