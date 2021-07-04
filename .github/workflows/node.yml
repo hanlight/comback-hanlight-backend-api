@@ -1,0 +1,46 @@
+name: Hanlight v1 Node CI/CD
+
+on:
+  push:
+    branches:
+      [master, develop]
+    pull_reqeust:
+      [master, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_SECRET_KEY: ${{ secrets.SECRET_ENV }}
+          directory: .
+          file_name: .env
+
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: S3 업로드
+        run: | 
+          sleep 10s
+          aws s3 cp \
+          ./${{ github.sha }}.zip \
+          s3://hanlight-v1-node-backend/${{ github.sha }}.zip
+
+      - name: CodeDeploy
+        run: | 
+          aws deploy create-deployment \
+          -—application-name hanlight-V1-node-backend \
+          -—deployment-group-name hanlight-V1-group \
+          -—s3-location bucket=hanlight-V1-node-backend,key=${{ github.sha }}.zip,bundleType=zip
