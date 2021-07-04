@@ -64,13 +64,13 @@ const getBoardLike = async (req: Request, res: Response, next: NextFunction) => 
                 ? board.boardLike.map(like => ({
                     user_name: like.user_name,
                     user_image: like.user.image
-                      ? `https://s3.ap-northeast-2.amazonaws.com/hanlight/profile-image/${like.user.image}`
+                      ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${like.user.image}`
                       : null,
                   }))
                 : board.comment[0].boardCommentLike.map(like => ({
                     user_name: like.user_name,
                     user_image: like.user.image
-                      ? `https://s3.ap-northeast-2.amazonaws.com/hanlight/profile-image/${like.user.image}`
+                      ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${like.user.image}`
                       : null,
                   })),
           },

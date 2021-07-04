@@ -35,11 +35,11 @@ const postBoard = async (req: Request, res: Response, next: NextFunction) => {
         board: {
           pk: board.pk,
           user_name: board.user_name,
-          user_image: !anonymous && user.image ? `https://s3.ap-northeast-2.amazonaws.com/hanlight/profile-image/${user.image}` : null,
+          user_image: !anonymous && user.image ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${user.image}` : null,
           content: board.content,
           createdAt: board.createdAt,
           files: board.boardImage.map(
-            (boardImage: BoardImage) => `https://s3.ap-northeast-2.amazonaws.com/hanlight/board/${boardImage.file}`
+            (boardImage: BoardImage) => `https://hanlight.s3.ap-northeast-2.amazonaws.com/board/${boardImage.file}`
           ),
         },
       },

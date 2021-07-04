@@ -75,10 +75,10 @@ const getBoard = async (req: Request, res: Response, next: NextFunction) => {
           pk: val.pk,
           user_name: val.user_name,
           user_image:
-            val.user_name && val.user.image ? `https://s3.ap-northeast-2.amazonaws.com/hanlight/profile-image/${val.user.image}` : null,
+            val.user_name && val.user.image ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${val.user.image}` : null,
           content: val.content,
           files: val.boardImage.map(
-            (boardImage: BoardImage) => `https://s3.ap-northeast-2.amazonaws.com/hanlight/board/${boardImage.file}`
+            (boardImage: BoardImage) => `https://hanlight.s3.ap-northeast-2.amazonaws.com/board/${boardImage.file}`
           ),
           edited: !!val.boardPatchLog.length,
           createdAt: val.createdAt,
@@ -90,7 +90,7 @@ const getBoard = async (req: Request, res: Response, next: NextFunction) => {
             user_name: comment.user_name,
             user_image:
               comment.user_name && comment.user.image
-                ? `https://s3.ap-northeast-2.amazonaws.com/hanlight/profile-image/${comment.user.image}`
+                ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${comment.user.image}`
                 : null,
             content: comment.content,
             createdAt: comment.createdAt,
