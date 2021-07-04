@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-18.04
+
     steps:
       - uses: actions/checkout@v2
 
@@ -21,8 +22,13 @@ jobs:
           file_name: .env
 
       - name: Make zip file
-        run: zip -qq -r ./$GITHUB_SHA.zip .
+        run: zip -qq -r ./node-server.zip .
         shell: bash
+
+      - name: setup-python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -31,17 +37,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      - name: Fixed Error
+        run: | 
+          alias python="python3"
+          pip install awscli
+          python3 -V
+          python -V
+          aws --version
       - name: S3 업로드
         run: | 
           sleep 10s
-          echo $LANG
           aws s3 cp \
-          ./${{ github.sha }}.zip \
-          s3://hanlight-v1-node-backend/${{ github.sha }}.zip
+          ./node-server.zip \
+          s3://hanlight-v1-node-backend/node-server.zip
 
       - name: CodeDeploy
         run: | 
           aws deploy create-deployment \
-          -—application-name hanlight-V1-node-backend \
-          -—deployment-group-name hanlight-V1-group \
-          -—s3-location bucket=hanlight-V1-node-backend,key=${{ github.sha }}.zip,bundleType=zip
+          --application-name hanlight-V1-node-backend \
+          --deployment-group-name hanlight-V1-group \
+          --s3-location bucket=hanlight-v1-node-backend,key=node-server.zip,bundleType=zip
