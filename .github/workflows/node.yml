@@ -34,6 +34,7 @@ jobs:
       - name: S3 업로드
         run: | 
           sleep 10s
+          echo $LANG
           aws s3 cp \
           ./${{ github.sha }}.zip \
           s3://hanlight-v1-node-backend/${{ github.sha }}.zip
