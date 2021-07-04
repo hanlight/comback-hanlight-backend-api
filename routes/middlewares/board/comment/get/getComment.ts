@@ -54,7 +54,7 @@ const getComment = async (req: Request, res: Response, next: NextFunction) => {
           comment: comments.rows.map((val: BoardComment) => ({
             pk: val.pk,
             user_name: val.user_name,
-            user_image: val.user_name && val.user.image ? `https://s3.ap-northeast-2.amazonaws.com/hanlight/profile-image/${val.user.image}` : null,
+            user_image: val.user_name && val.user.image ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${val.user.image}` : null,
             content: val.content,
             createdAt: val.createdAt,
             edited: !!val.boardPatchLog.length,
