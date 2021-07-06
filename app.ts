@@ -19,7 +19,7 @@ const debug = Debug('hanlight');
 
 app.use(
   cors({
-    origin: process.env.NODE_ENV === 'development' ? '*' : /hanlight\.kr/,
+    origin: '*' //process.env.NODE_ENV === 'development' ? '*' : '*',
   })
 );
 app.use(helmet());

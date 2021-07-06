@@ -33,11 +33,10 @@ const postProfileImage = async (req: Request, res: Response, next: NextFunction)
 
 function upload(file: Express.Multer.File): Promise<string> {
   const Key = Date.now().toString() + '.' + file.mimetype.split('/')[1];
-
   return new Promise((resolve, reject) => {
     s3.putObject(
       {
-        Bucket: `hanlight/profile-image`,
+        Bucket: 'hanlight',
         ACL: 'public-read',
         ContentType: file.mimetype,
         Key,
