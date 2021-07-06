@@ -3,9 +3,6 @@ name: Hanlight v1 Node CI/CD
 on:
   push:
     branches:
-      [master, develop, feature/CI]
-  pull_reqeust:
-    branches:
       [master, develop]
 
 jobs:
