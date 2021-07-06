@@ -4,7 +4,8 @@ on:
   push:
     branches:
       [master, develop, feature/CI]
-    pull_reqeust:
+  pull_reqeust:
+    branches:
       [master, develop]
 
 jobs:
