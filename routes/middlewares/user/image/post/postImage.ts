@@ -36,7 +36,7 @@ function upload(file: Express.Multer.File): Promise<string> {
   return new Promise((resolve, reject) => {
     s3.putObject(
       {
-        Bucket: 'hanlight',
+        Bucket: 'hanlight/profile-image',
         ACL: 'public-read',
         ContentType: file.mimetype,
         Key,
