@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/server/node
+    overwrite: yes
+
+hooks:
+  DownloadBundle: 
+    - location: aws/src/deploy.sh
+      timeout: 600
+      runas: ubuntu
+
+permissions:
+  - object: /home/ubuntu/server
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
