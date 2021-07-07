@@ -37,20 +37,11 @@ const authSend = async (req: Request, res: Response, next: NextFunction) => {
             })
         }).catch(
             (err) => {
-                res.json({
-                    success: false,
-                    err,
-                    phone
-                })
             console.error(err);
-            //next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
+            next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
         });
     }else{
-        res.json({
-            success: false,
-            phone
-        })
-        //next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
+        next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
     }
 
 }

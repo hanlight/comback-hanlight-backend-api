@@ -31,7 +31,7 @@ function upload(file: Express.Multer.File): Promise<string> {
     const Key = Date.now().toString() + '.' + file.mimetype.split('/')[1];
     s3.putObject(
       {
-        Bucket: 'hanlight',
+        Bucket: 'hanlight/board',
         ACL: 'public-read',
         ContentType: file.mimetype,
         Key,
