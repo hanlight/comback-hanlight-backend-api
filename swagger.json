@@ -121,7 +121,9 @@
         }
       },
       "patch": {
-        "tags": ["user"],
+        "tags": [
+          "user"
+        ],
         "description": "전화번호 수정",
         "parameters": [
           {
@@ -1585,6 +1587,96 @@
                   "category": {
                     "type": "string",
                     "description": "생활 || 게임"
+                  },
+                  "user_position": {
+                    "type": "string",
+                    "description": "개발 || 기획 || 디자인"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "properties": {
+                        "team": {
+                          "properties": {
+                            "pk": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "leader_name": {
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 팀 참가",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "team_pk": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "string",
+                    "description": "개발 || 기획 || 디자인"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "참가코드"
                   }
                 }
               }
@@ -1614,16 +1706,19 @@
                             "password": {
                               "type": "string"
                             },
-                            "leader": {
+                            "teamMember": {
                               "type": "object",
                               "properties": {
                                 "name": {
                                   "type": "string"
                                 },
-                                "classNum": {
+                                "leader": {
                                   "type": "string"
                                 },
-                                "role": {
+                                "studentId": {
+                                  "type": "string"
+                                },
+                                "position": {
                                   "type": "string"
                                 }
                               }
@@ -1652,7 +1747,7 @@
         "tags": [
           "hanseithon"
         ],
-        "description": "한세톤 팀 삭제",
+        "description": "한세톤 팀 나가기",
         "parameters": [
           {
             "in": "header",
@@ -1666,10 +1761,10 @@
           {
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "number"
             },
-            "name": "teamPk",
-            "description": "한세톤 팀 pk",
+            "name": "team_pk",
+            "description": "한세톤 팀 pk (body, UUID)",
             "required": true
           }
         ],
@@ -1693,12 +1788,12 @@
         }
       }
     },
-    "/hanseithon/team/member": {
-      "post": {
+    "/hanseithon/team/match": {
+      "get": {
         "tags": [
           "hanseithon"
         ],
-        "description": "한세톤 팀 멤버 생성",
+        "description": "한세톤 팀 매칭 생성",
         "parameters": [
           {
             "in": "header",
@@ -1712,10 +1807,89 @@
           {
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "string"
             },
-            "name": "teamPk",
-            "description": "신청하려는 팀의 pk",
+            "name": "category",
+            "description": "카테고리",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "teamMatch": {
+                          "type": "object",
+                          "properties": {
+                            "pk": {
+                              "type": "string"
+                            },
+                            "user_pk": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "studentId": {
+                              "type": "string"
+                            },
+                            "grade": {
+                              "type": "string"
+                            },
+                            "classNum": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            },
+                            "position": {
+                              "type": "string"
+                            },
+                            "introduction": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 팀 매칭 생성",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
             "required": true
           }
         ],
@@ -1724,12 +1898,17 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "role": {
+                  "category": {
                     "type": "string",
-                    "description": "Planner || Developer || Designer"
+                    "description": "l || g"
                   },
-                  "password": {
-                    "type": "string"
+                  "position": {
+                    "type": "string",
+                    "description": "개발 || 기획 || 디자인"
+                  },
+                  "introduction": {
+                    "type": "string",
+                    "description": "자기소개"
                   }
                 }
               }
@@ -1749,30 +1928,571 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "team": {
+                        "teamMatch": {
                           "type": "object",
                           "properties": {
+                            "pk": {
+                              "type": "string"
+                            },
+                            "user_pk": {
+                              "type": "string"
+                            },
                             "name": {
+                              "type": "string"
+                            },
+                            "studentId": {
+                              "type": "string"
+                            },
+                            "grade": {
+                              "type": "string"
+                            },
+                            "classNum": {
                               "type": "string"
                             },
                             "category": {
                               "type": "string"
                             },
-                            "member": {
-                              "type": "object",
-                              "properties": {
-                                "name": {
-                                  "type": "string"
-                                },
-                                "classNum": {
-                                  "type": "string"
-                                },
-                                "role": {
-                                  "type": "string"
-                                }
-                              }
+                            "position": {
+                              "type": "string"
+                            },
+                            "introduction": {
+                              "type": "string"
                             }
                           }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      }
+    },
+    "/hanseithon/theme": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 주제 최초공개 URL",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "theme": {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "공개 전입니다."
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/hanseithon/judgement": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 심사기준표 URL",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "judgement": {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "공개 전입니다."
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/hanseithon/user": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "현재 소속 확인",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "mentor(멘토) || observer(관전) || staff(스텝) || attendee(팀원) || common(무소속)"
+                        },
+                        "team": {
+                          "type": "string",
+                          "description": "팀원일 경우 소속된 팀 이름, 그 외엔 NULL"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/hanseithon/mentor": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "자리에 있는 멘토 목록",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mentor": {
+                          "type": "object",
+                          "properties": {
+                            "pk": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/hanseithon/mentor/request": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "질문 목록(MENTOR 전용)",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mentor": {
+                          "type": "object",
+                          "properties": {
+                            "content": {
+                              "type": "string"
+                            },
+                            "mentor_pk": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 질문하기",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "mentor_pk": {
+                    "type": "number",
+                    "description": "질문 할 멘토 PK"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "질문 내용"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 답변완료(MENTOR 전용)",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "request_pk": {
+                    "type": "number",
+                    "description": "질문한 PK"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      }
+    },
+    "/hanseithon/admin/check": {
+      "get": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 출입명부 전체 조회",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "check": {
+                          "type": "object",
+                          "properties": {
+                            "pk": {
+                              "type": "string"
+                            },
+                            "user_pk": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string",
+                              "description": "mentor(멘토) || observer(관전) || staff(스텝) || attendee(팀원)"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "here": {
+                              "type": "string",
+                              "description": "대회장 존재 여부(true, false)"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "토큰 만료"
+          },
+          "403": {
+            "description": "권한 없음"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터, 중복 요소"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "hanseithon"
+        ],
+        "description": "한세톤 입/퇴장 등록",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "user_pk": {
+                    "type": "string",
+                    "description": "입/퇴장 할 USER PK (UUID)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "checkIn": {
+                          "type": "boolean",
+                          "description": "대회장 존재 여부(true, false)"
                         }
                       }
                     }
@@ -2886,6 +3606,76 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "( 토큰이 만료되었을 때 ) Token_Expired - 토큰이 만료되었습니다. / ( 토큰이 없거나 요청이 잘못되었을 경우 ) Wrong_Request - 잘못된 요청입니다."
+          },
+          "403": {
+            "description": "권한 없음 (Forbidden)"
+          },
+          "412": {
+            "description": "잘못된 요청 데이터"
+          }
+        }
+      }
+    },
+    "/admin/hanseithon/user": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "description": "유저 타입",
+        "parameters": [
+          {
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "name": "access_token",
+            "description": "토큰",
+            "required": true
+          },
+          {
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "name": "user_pk",
+            "description": "토큰 (body, UUID)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "number",
+                              "description": "Student || Teacher || Graduate || Parent"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
