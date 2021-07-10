@@ -34,6 +34,7 @@ const postBoard = async (req: Request, res: Response, next: NextFunction) => {
       data: {
         board: {
           pk: board.pk,
+          test: 'test',
           user_name: board.user_name,
           user_image: !anonymous && user.image ? `https://hanlight.s3.ap-northeast-2.amazonaws.com/profile-image/${user.image}` : null,
           content: board.content,
