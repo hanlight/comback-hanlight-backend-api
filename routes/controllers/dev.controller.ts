@@ -10,7 +10,7 @@ import getCodePrintValidation from '@Middleware/dev/print/_validation';
 
 dotenv.config();
 const router = Router();
-
+/*
 router.use((req: Request, res: Response, next: NextFunction) => {
   if (process.env.NODE_ENV !== 'development') {
     console.log(process.env.NODE_ENV);
@@ -19,7 +19,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
     next();
   }
 });
-
+*/
 router.use('/api-docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerJson));
 router.get('/print', getCodePrintValidation, codeprint);
 router.use('/errors', (req: Request, res: Response, next: NextFunction) => {
