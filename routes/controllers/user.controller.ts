@@ -46,6 +46,7 @@ import getUser from '@Middleware/user/get/getUser';
 import userPatchPassword from '@Middleware/user/patch/password/_validation';
 import patchPassword from '@Middleware/user/patch/password/patchPassword';
 import userPatchPhone from '@Middleware/user/patch/phone/_validation';
+import phoneUpdateCheck from '@Middleware/user/patch/phone/phoneUpdate';
 
 // profile-image
 import imageMulter from '@Middleware/user/image/post/imageMulter';
@@ -79,7 +80,7 @@ router.use('/', verifyToken, getUserFromToken);
 
 router.get('/', getUser);
 router.patch('/password', passwordEncryption, patchPassword);
-router.patch('/phone', authCheckCode, phoneCheck, phoneInsert);
+router.patch('/phone',phoneUpdateCheck, phoneCheck, phoneInsert);
 router.post('/image', postImage, updateImage, getUser);
 
 export default router;
