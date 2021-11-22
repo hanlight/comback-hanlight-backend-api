@@ -18,28 +18,35 @@ const authSend = async (req: Request, res: Response, next: NextFunction) => {
         for (let i = 0; i < 5; i++) {
             verifyCode += String(Math.floor(Math.random() * 10));
         };
-        Cache.put(verifyCode, '0' + pn.getNumber('significant'), 180000);
+        if(Cache.get('0' + pn.getNumber('significant'))){
+            next(new CustomError({ name: 'Wrong_Data', message: '전송 후 1분 뒤 다시 시도해주세요.' }));
+        }else{
+            Cache.put('0' + pn.getNumber('significant'), true, 60000);
+            Cache.put(verifyCode, '0' + pn.getNumber('significant'), 180000);
+    
+            AWS.config.update({region: process.env.SNS_AWS_REGION});
+    
+            const params = {
+            Message: '[한빛] 본인확인 인증번호 [' + verifyCode + ']를 화면에 입력해주세요',
+            PhoneNumber: pn.getNumber('e164')
+            };
+    
+            let publishTextPromise = new AWS.SNS().publish(params).promise();
+    
+            publishTextPromise.then(
+            (data) => {
+                console.log("MessageID is " + data.MessageId);
+                res.json({
+                    success: true,
+                })
+            }).catch(
+                (err) => {
+                console.error(err);
+                next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
+            });
+        }
 
-        AWS.config.update({region: process.env.SNS_AWS_REGION});
-
-        const params = {
-        Message: '[한빛] 본인확인 인증번호 [' + verifyCode + ']를 화면에 입력해주세요',
-        PhoneNumber: pn.getNumber('e164')
-        };
-
-        let publishTextPromise = new AWS.SNS().publish(params).promise();
-
-        publishTextPromise.then(
-        (data) => {
-            console.log("MessageID is " + data.MessageId);
-            res.json({
-                success: true,
-            })
-        }).catch(
-            (err) => {
-            console.error(err);
-            next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
-        });
+        
     }else{
         next(new CustomError({ name: 'Wrong_Data', message: '잘못 된 전화번호입니다.' }));
     }
