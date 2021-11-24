@@ -1,5 +1,6 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 
+import * as Sentry from '@sentry/node';
 import Errors from './errors';
 
 interface IDefinedError {
@@ -11,6 +12,7 @@ interface IDefinedError {
 
 const ErrorMiddleware: ErrorRequestHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
+  Sentry.captureException(err);
 
   const error: IDefinedError = Errors[err.name];
   const name: string = err.name;

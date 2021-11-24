@@ -1,5 +1,8 @@
 import { Router } from 'express';
 
+// error
+import ErrorMiddleware from '@Middleware/error/errorMiddleware';
+
 // common
 import checkUserType from '@Middleware/common/checkUserType';
 
@@ -65,5 +68,7 @@ router.patch('/comment', patchComment);
 router.delete('/comment', deleteComment);
 router.get('/like', getBoardLike);
 router.post('/like', postBoardlike);
+
+router.use(ErrorMiddleware);
 
 export default router;

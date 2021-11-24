@@ -37,3 +37,7 @@
   > AWS_SECRET_ACCESSKEY= string  
   > S3_AWS_REGION= ap-northeast-2  
   > SNS_AWS_REGION= ap-northeast-1
+
+  SENTRY__SETTING
+
+  > SENTRY_DSN=
