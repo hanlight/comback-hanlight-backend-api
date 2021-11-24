@@ -5,6 +5,9 @@ import * as dotenv from 'dotenv';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as morgan from 'morgan';
+import * as Sentry from '@sentry/node';
+import * as Tracing from "@sentry/tracing";
+import { RewriteFrames } from "@sentry/integrations";
 
 import CustomError from '@Middleware/error/customError';
 import ErrorMiddleware from '@Middleware/error/errorMiddleware';
@@ -16,6 +19,27 @@ dotenv.config();
 
 const app: express.Application = express();
 const debug = Debug('hanlight');
+
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 1.0,
+    integrations: [
+      new RewriteFrames({
+        root: global.__dirname,
+      }),
+      new Sentry.Integrations.Http({ tracing: true }),
+      new Tracing.Integrations.Express({
+        app,
+      }),
+    ],
+  });
+  Sentry.setUser({ ip_address: '{{auto}}' });
+  
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
+  app.use(Sentry.Handlers.errorHandler())
+}
 
 app.use(
   cors({

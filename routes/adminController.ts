@@ -1,5 +1,8 @@
 import { Router } from 'express';
 
+// error
+import ErrorMiddleware from '@Middleware/error/errorMiddleware';
+
 // common, validation
 import deleteCommentValidation from '@Middleware/admin/board/comment/delete/_validation';
 import deleteBoardValidation from '@Middleware/admin/board/delete/_validation';
@@ -77,5 +80,6 @@ router.delete('/board', deleteBoard);
 router.delete('/comment', deleteComment);
 router.post('/hanseithon/user', getHanseithonUser)
 
+router.use(ErrorMiddleware);
 
 export default router;

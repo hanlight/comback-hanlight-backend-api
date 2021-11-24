@@ -1,5 +1,8 @@
 import { Request, Response, Router } from 'express';
 
+// error
+import ErrorMiddleware from '@Middleware/error/errorMiddleware';
+
 import board from '@Controller/board.controller';
 import dev from '@Controller/dev.controller';
 import notice from '@Controller/notice.controller';
@@ -22,5 +25,7 @@ router.use(verifyToken, getUserFromToken);
 
 router.use('/notice', notice);
 router.use('/board', board);
+
+router.use(ErrorMiddleware);
 
 export default router;

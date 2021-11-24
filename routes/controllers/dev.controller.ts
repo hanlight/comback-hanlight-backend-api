@@ -2,11 +2,15 @@ import * as dotenv from 'dotenv';
 import { NextFunction, Request, Response, Router } from 'express';
 import * as swaggerUiExpress from 'swagger-ui-express';
 
+// error
+import ErrorMiddleware from '@Middleware/error/errorMiddleware';
 import CustomError from '@Middleware/error/customError';
 import Errors from '@Middleware/error/errors';
+
 import codeprint from '@Middleware/dev/print/codeprint';
-import * as swaggerJson from '../../swagger.json';
 import getCodePrintValidation from '@Middleware/dev/print/_validation';
+
+import * as swaggerJson from '../../swagger.json';
 
 dotenv.config();
 const router = Router();
@@ -25,4 +29,7 @@ router.get('/print', getCodePrintValidation, codeprint);
 router.use('/errors', (req: Request, res: Response, next: NextFunction) => {
   res.json(Errors);
 });
+
+router.use(ErrorMiddleware);
+
 export default router;

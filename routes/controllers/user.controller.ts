@@ -1,5 +1,8 @@
 import { Router } from 'express';
 
+// error
+import ErrorMiddleware from '@Middleware/error/errorMiddleware';
+
 // common
 import checkValidation from '@Middleware/common/checkValidation';
 import passwordEncryption from '@Middleware/user/common/passwordEncryption';
@@ -82,5 +85,7 @@ router.get('/', getUser);
 router.patch('/password', passwordEncryption, patchPassword);
 router.patch('/phone',phoneUpdateCheck, phoneCheck, phoneInsert);
 router.post('/image', postImage, updateImage, getUser);
+
+router.use(ErrorMiddleware);
 
 export default router;
