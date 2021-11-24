@@ -34,7 +34,6 @@ if (process.env.NODE_ENV === 'production') {
       }),
     ],
   });
-  Sentry.setUser({ ip_address: '{{auto}}' });
   
   app.use(Sentry.Handlers.requestHandler());
   app.use(Sentry.Handlers.tracingHandler());
