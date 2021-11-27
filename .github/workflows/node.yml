@@ -3,7 +3,7 @@ name: Hanlight v1 Node CI/CD
 on:
   push:
     branches:
-      [master, develop, feature/github-action]
+      [master, develop]
 
 jobs:
   build:
