@@ -13,11 +13,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
-        with:
-          envkey_SECRET_KEY: ${{ secrets.SECRET_ENV }}
-          directory: .
-          file_name: .env
+        run: echo -e "${{ secrets.SECRET_ENV }}" > .env
+        shell: bash
 
       - name: Make zip file
         run: zip -qq -r ./node-server.zip .
